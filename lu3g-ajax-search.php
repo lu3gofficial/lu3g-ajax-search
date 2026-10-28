@@ -2,7 +2,9 @@
 /**
  * Plugin Name:       LU3G Ajax Search
  * Description:       Widget Elementor di ricerca Ajax per CPT (JetEngine compatibile): lente che apre un pannello di ricerca con effetto blur, risultati live e link al dettaglio.
- * Version:           1.2.1
+ * Version:           1.2.2
+ * Plugin URI:        https://github.com/lu3gofficial/lu3g-ajax-search
+ * Update URI:        https://github.com/lu3gofficial/lu3g-ajax-search
  * Author:            LU3G Agenzia Web
  * Text Domain:       lu3g-ajax-search
  * Requires at least: 6.2
@@ -12,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LU3G_SEARCH_VERSION', '1.2.1' );
+define( 'LU3G_SEARCH_VERSION', '1.2.2' );
 define( 'LU3G_SEARCH_FILE', __FILE__ );
 define( 'LU3G_SEARCH_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LU3G_SEARCH_URL', plugin_dir_url( __FILE__ ) );
@@ -88,3 +90,10 @@ add_action( 'admin_notices', function () {
 	}
 	echo '<div class="notice notice-warning"><p><strong>LU3G Ajax Search</strong> richiede Elementor attivo.</p></div>';
 } );
+
+/**
+ * Aggiornamenti automatici dalle release GitHub di https://github.com/lu3gofficial/lu3g-ajax-search (vedi includes/class-updater.php).
+ * Fuori da ogni controllo su Elementor: il plugin si aggiorna anche dove Elementor è disattivato.
+ */
+require_once __DIR__ . '/includes/class-updater.php';
+LU3G_Ajax_Search_Updater::init( __FILE__ );
