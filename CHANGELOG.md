@@ -1,5 +1,12 @@
 # Registro delle modifiche
 
+## 1.5.0
+- Nuova sezione Stile → Barra di input: larghezza, altezza, spaziature, distanza tra lente e testo, arrotondamento (anche angolo per angolo), caratteri completi e bordo. Con le schede Normale, Hover e Attiva: sfondo, colori di testo e lente, bordo e ombra.
+- Lente a sinistra o a destra del testo.
+- X per svuotare: solo quando c'è del testo (nuovo comportamento della barra), sempre o mai.
+- Distanza della tendina dalla barra regolabile.
+- Corretto: con il testo iniziale vuoto, alla selezione del campo compariva una tendina vuota.
+
 ## 1.4.0
 - Nuovo controllo "Mostra come: Icona / Barra di input", per desktop, tablet e mobile: la barra prende il posto della lente e il campo resta dove si trova il widget. I widget esistenti restano con l'icona.
 - Allineamento della barra (sinistra, centro, destra), per dispositivo.

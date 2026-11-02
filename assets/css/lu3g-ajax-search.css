@@ -272,12 +272,39 @@ html.lu3g-search-lock body {
 	visibility: visible;
 	filter: none;
 	transform: none;
-	transition: none;
+	transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .lu3g-pos-inline .lu3g-search__bar {
 	border-bottom: 0;
 	border-radius: inherit;
+}
+
+/* Ordine fisso: la lente può stare prima (0) o dopo (2) il testo; la X è sempre in fondo */
+.lu3g-search__panel.lu3g-pos-inline .lu3g-search__input {
+	order: 1;
+	transition: color 0.2s ease;
+}
+
+.lu3g-search__panel.lu3g-pos-inline .lu3g-search__close {
+	order: 3;
+}
+
+.lu3g-pos-inline .lu3g-search__bar-icon {
+	transition: color 0.2s ease;
+}
+
+.lu3g-pos-inline[data-bar-close="typing"]:not(.has-value) .lu3g-search__close {
+	visibility: hidden;
+}
+
+.lu3g-search__panel.lu3g-pos-inline[data-bar-close="never"] .lu3g-search__close {
+	display: none;
+}
+
+/* Senza testo iniziale non c'è niente da mostrare finché non si cerca */
+.lu3g-search__dropdown.is-idle:has(.lu3g-search__hint:empty) {
+	display: none;
 }
 
 .lu3g-pos-inline .lu3g-search__progress {

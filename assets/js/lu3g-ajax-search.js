@@ -26,6 +26,7 @@
     '--lu3g-panel-radius',
     '--lu3g-panel-width',
     '--lu3g-inline-align',
+    '--lu3g-dd-gap',
     '--lu3g-panel-offset-x',
     '--lu3g-panel-offset-y',
     '--lu3g-panel-max',
@@ -236,7 +237,8 @@
       const unita = getComputedStyle(this.panel).getPropertyValue('--lu3g-panel-max').trim().slice(-2);
       const scelto = isNaN(massimo) ? window.innerHeight * 0.6 : (unita === 'vh' ? window.innerHeight * massimo / 100 : massimo);
       const s = this.tendina.style;
-      s.setProperty('--lu3g-dd-top', Math.round(r.bottom + 6) + 'px');
+      const distanza = parseFloat(getComputedStyle(this.panel).getPropertyValue('--lu3g-dd-gap'));
+      s.setProperty('--lu3g-dd-top', Math.round(r.bottom + (isNaN(distanza) ? 6 : distanza)) + 'px');
       s.setProperty('--lu3g-dd-left', Math.round(r.left) + 'px');
       s.setProperty('--lu3g-dd-width', Math.round(r.width) + 'px');
       s.setProperty('--lu3g-dd-max', Math.round(Math.min(scelto, spazio)) + 'px');
@@ -487,6 +489,7 @@
     onInput() {
       const q = this.input.value.trim();
       clearTimeout(this.timer);
+      this.panel.classList.toggle('has-value', this.input.value.length > 0);
 
       if (this.inline && !this.aperto) this.open();
 

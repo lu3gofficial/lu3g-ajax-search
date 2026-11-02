@@ -6,6 +6,9 @@
 defined( 'ABSPATH' ) || exit;
 
 use Elementor\Controls_Manager;
+use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Box_Shadow;
+use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Widget_Base;
 
@@ -653,6 +656,214 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 
 		$this->end_controls_section();
 
+		/* ---------- Stile: barra di input ---------- */
+		// La barra resta dentro il widget (non va nel <body>): qui i selettori di Elementor funzionano direttamente.
+		$bar_box   = '{{WRAPPER}} .lu3g-search__panel.lu3g-pos-inline';
+		$bar_input = '{{WRAPPER}} .lu3g-search__panel.lu3g-pos-inline .lu3g-search__input';
+		$bar_lens  = '{{WRAPPER}} .lu3g-search__panel.lu3g-pos-inline .lu3g-search__bar-icon';
+
+		$this->start_controls_section( 'style_input_bar', array(
+			'label' => 'Barra di input',
+			'tab'   => Controls_Manager::TAB_STYLE,
+		) );
+
+		$this->add_control( 'ibar_note', array(
+			'type'            => Controls_Manager::RAW_HTML,
+			'raw'             => 'Vale per i dispositivi con "Mostra come: Barra di input". La tendina dei risultati si regola in Stile → Pannello e Risultati.',
+			'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+		) );
+
+		$this->add_responsive_control( 'ibar_width', array(
+			'label'      => 'Larghezza',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px', '%', 'vw' ),
+			'range'      => array(
+				'px' => array( 'min' => 120, 'max' => 1200 ),
+				'%'  => array( 'min' => 10, 'max' => 100 ),
+				'vw' => array( 'min' => 10, 'max' => 100 ),
+			),
+			'selectors'  => array( $bar_box => 'width: {{SIZE}}{{UNIT}}; max-width: 100%;' ),
+		) );
+
+		$this->add_responsive_control( 'ibar_height', array(
+			'label'      => 'Altezza',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 28, 'max' => 120 ) ),
+			'selectors'  => array( $bar_box . ' .lu3g-search__bar' => 'min-height: {{SIZE}}{{UNIT}}; padding-top: 0; padding-bottom: 0;' ),
+		) );
+
+		$this->add_responsive_control( 'ibar_padding', array(
+			'label'      => 'Spaziatura interna',
+			'type'       => Controls_Manager::DIMENSIONS,
+			'size_units' => array( 'px', 'em' ),
+			'selectors'  => array( $bar_box . ' .lu3g-search__bar' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+		) );
+
+		$this->add_responsive_control( 'ibar_gap', array(
+			'label'      => 'Distanza tra lente e testo',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 40 ) ),
+			'selectors'  => array( $bar_box . ' .lu3g-search__bar' => 'gap: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_responsive_control( 'ibar_radius', array(
+			'label'      => 'Arrotondamento',
+			'type'       => Controls_Manager::DIMENSIONS,
+			'size_units' => array( 'px', '%' ),
+			'selectors'  => array( $bar_box => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+		) );
+
+		$this->add_group_control( Group_Control_Typography::get_type(), array(
+			'name'     => 'ibar_typography',
+			'label'    => 'Caratteri',
+			'selector' => $bar_input,
+		) );
+
+		$this->add_group_control( Group_Control_Border::get_type(), array(
+			'name'     => 'ibar_border',
+			'label'    => 'Bordo',
+			'selector' => $bar_box,
+		) );
+
+		$this->add_control( 'ibar_icon_side', array(
+			'label'                => 'Lente',
+			'type'                 => Controls_Manager::CHOOSE,
+			'options'              => array(
+				'left'  => array( 'title' => 'A sinistra', 'icon' => 'eicon-h-align-left' ),
+				'right' => array( 'title' => 'A destra', 'icon' => 'eicon-h-align-right' ),
+			),
+			'selectors_dictionary' => array(
+				'left'  => '0',
+				'right' => '2',
+			),
+			'selectors'            => array( $bar_lens => 'order: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'ibar_close', array(
+			'label'   => 'X per svuotare',
+			'type'    => Controls_Manager::SELECT,
+			'options' => array(
+				'typing' => 'Solo quando c\'è del testo',
+				'always' => 'Sempre',
+				'never'  => 'Mai',
+			),
+			'default' => 'typing',
+		) );
+
+		$this->add_responsive_control( 'ibar_dropdown_gap', array(
+			'label'      => 'Distanza della tendina',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 60 ) ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-dd-gap: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->start_controls_tabs( 'ibar_tabs', array( 'separator' => 'before' ) );
+
+		/* Normale */
+		$this->start_controls_tab( 'ibar_tab_normal', array( 'label' => 'Normale' ) );
+
+		$this->add_control( 'ibar_bg', array(
+			'label'     => 'Sfondo',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( $bar_box => 'background-color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'ibar_color', array(
+			'label'     => 'Testo',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( $bar_input => 'color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'ibar_placeholder', array(
+			'label'     => 'Placeholder',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( $bar_input . '::placeholder' => 'color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'ibar_lens_color', array(
+			'label'     => 'Lente',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( $bar_lens => 'color: {{VALUE}};' ),
+		) );
+
+		$this->add_group_control( Group_Control_Box_Shadow::get_type(), array(
+			'name'     => 'ibar_shadow',
+			'label'    => 'Ombra',
+			'selector' => $bar_box,
+		) );
+
+		$this->end_controls_tab();
+
+		/* Hover */
+		$this->start_controls_tab( 'ibar_tab_hover', array( 'label' => 'Hover' ) );
+
+		$this->add_control( 'ibar_bg_hover', array(
+			'label'     => 'Sfondo',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( $bar_box . ':hover' => 'background-color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'ibar_border_hover', array(
+			'label'     => 'Colore del bordo',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( $bar_box . ':hover' => 'border-color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'ibar_lens_hover', array(
+			'label'     => 'Lente',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( $bar_box . ':hover .lu3g-search__bar-icon' => 'color: {{VALUE}};' ),
+		) );
+
+		$this->add_group_control( Group_Control_Box_Shadow::get_type(), array(
+			'name'     => 'ibar_shadow_hover',
+			'label'    => 'Ombra',
+			'selector' => $bar_box . ':hover',
+		) );
+
+		$this->end_controls_tab();
+
+		/* Attiva: mentre si scrive */
+		$this->start_controls_tab( 'ibar_tab_focus', array( 'label' => 'Attiva' ) );
+
+		$this->add_control( 'ibar_bg_focus', array(
+			'label'     => 'Sfondo',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( $bar_box . ':focus-within' => 'background-color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'ibar_color_focus', array(
+			'label'     => 'Testo',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( $bar_box . ':focus-within .lu3g-search__input' => 'color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'ibar_border_focus', array(
+			'label'     => 'Colore del bordo',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( $bar_box . ':focus-within' => 'border-color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'ibar_lens_focus', array(
+			'label'     => 'Lente',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( $bar_box . ':focus-within .lu3g-search__bar-icon' => 'color: {{VALUE}};' ),
+		) );
+
+		$this->add_group_control( Group_Control_Box_Shadow::get_type(), array(
+			'name'     => 'ibar_shadow_focus',
+			'label'    => 'Ombra',
+			'selector' => $bar_box . ':focus-within',
+		) );
+
+		$this->end_controls_tab();
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
 		/* ---------- Stile: risultati ---------- */
 		$this->start_controls_section( 'style_results', array(
 			'label' => 'Risultati',
@@ -953,6 +1164,7 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			<div class="lu3g-search__panel is-idle" id="<?php echo esc_attr( $panel_id ); ?>"
 				data-anim="<?php echo esc_attr( $panel_anim ); ?>"
 				data-results-anim="<?php echo esc_attr( $results_anim ); ?>"
+				data-bar-close="<?php echo esc_attr( in_array( $s['ibar_close'] ?? '', array( 'typing', 'always', 'never' ), true ) ? $s['ibar_close'] : 'typing' ); ?>"
 				role="dialog" aria-modal="true" aria-label="<?php echo esc_attr( $text( 'dialog_label', 'Ricerca' ) ); ?>">
 
 				<div class="lu3g-search__bar">
