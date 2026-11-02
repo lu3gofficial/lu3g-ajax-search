@@ -121,52 +121,194 @@ html.lu3g-search-lock body {
 	--_accent: var(--lu3g-accent, #9b5a56);
 	--_hover: var(--lu3g-hover-bg, rgba(155, 90, 86, 0.07));
 	--_radius: var(--lu3g-panel-radius, 14px);
+	--_ox: var(--lu3g-panel-offset-x, 16px);  /* distanza minima dai bordi laterali */
+	--_oy: var(--lu3g-panel-offset-y, 12px);  /* distanza dal riferimento verticale */
+	--_w: var(--lu3g-panel-width, 620px);
+	--_dur: var(--lu3g-anim-duration, 320ms);
+	--_ease: var(--lu3g-anim-ease, cubic-bezier(0.2, 0.8, 0.2, 1));
+	--_cx: 0px;                               /* spostamento di centratura, sommato all'animazione */
+	--_cy: 0px;
+	--_from: translateY(-10px);               /* da dove parte l'animazione di apertura */
+	--_from-filter: none;
 
 	position: fixed;
-	top: calc(var(--lu3g-top, 0px) + 12px);
-	left: 50%;
+	top: calc(var(--lu3g-top, 0px) + var(--_oy));
+	left: var(--lu3g-left, var(--_ox));
 	z-index: 99999;
 	display: flex;
 	flex-direction: column;
-	width: min(var(--lu3g-panel-width, 620px), calc(100vw - 32px));
-	max-height: calc(100vh - var(--lu3g-top, 0px) - 32px);
-	max-height: calc(100dvh - var(--lu3g-top, 0px) - 32px);
+	width: min(var(--_w), calc(100vw - 2 * var(--_ox)));
+	max-height: calc(100vh - var(--lu3g-top, 0px) - var(--_oy) - 20px);
+	max-height: min(var(--lu3g-panel-max, 100dvh), calc(100dvh - var(--lu3g-top, 0px) - var(--_oy) - 20px));
 	overflow: hidden;
 	box-sizing: border-box;
 	background: var(--_bg);
 	color: var(--_text);
+	border: var(--lu3g-panel-border-width, 0px) solid var(--lu3g-panel-border-color, transparent);
 	border-radius: var(--_radius);
-	box-shadow:
-		0 1px 2px rgba(0, 0, 0, 0.04),
-		0 28px 64px -18px rgba(40, 20, 20, 0.35);
-	font-family: inherit;
+	box-shadow: var(--lu3g-panel-shadow, 0 1px 2px rgba(0, 0, 0, 0.04), 0 28px 64px -18px rgba(40, 20, 20, 0.35));
+	-webkit-backdrop-filter: var(--lu3g-panel-glass, none);
+	backdrop-filter: var(--lu3g-panel-glass, none);
+	font-family: var(--lu3g-panel-font, inherit);
 	text-align: left;
 	opacity: 0;
 	visibility: hidden;
-	transform: translate(-50%, -10px);
+	filter: var(--_from-filter);
+	transform: translate(var(--_cx), var(--_cy)) var(--_from);
 	transition:
-		opacity 0.22s ease,
-		transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
-		visibility 0s linear 0.32s;
+		opacity calc(var(--_dur) * 0.7) ease,
+		transform var(--_dur) var(--_ease),
+		filter var(--_dur) ease,
+		visibility 0s linear var(--_dur);
 }
 
 .lu3g-search__panel.is-open {
 	opacity: 1;
 	visibility: visible;
-	transform: translate(-50%, 0);
+	filter: none;
+	transform: translate(var(--_cx), var(--_cy));
 	transition-delay: 0s;
 }
 
-/* Desktop: allineato all'icona */
-.lu3g-search__panel.is-anchored {
-	left: auto;
-	right: var(--lu3g-right, 16px);
-	width: min(var(--lu3g-panel-width, 440px), calc(100vw - 32px));
-	transform: translateY(-10px);
+/* Animazioni di apertura */
+.lu3g-search__panel[data-anim="slide-up"]    { --_from: translateY(18px); }
+.lu3g-search__panel[data-anim="slide-left"]  { --_from: translateX(28px); }
+.lu3g-search__panel[data-anim="slide-right"] { --_from: translateX(-28px); }
+.lu3g-search__panel[data-anim="fade"]        { --_from: scale(1); }
+.lu3g-search__panel[data-anim="zoom"]        { --_from: scale(0.9); }
+.lu3g-search__panel[data-anim="zoom-out"]    { --_from: scale(1.08); }
+.lu3g-search__panel[data-anim="pop"]         { --_from: scale(0.85); --_ease: var(--lu3g-anim-ease, cubic-bezier(0.34, 1.56, 0.64, 1)); }
+.lu3g-search__panel[data-anim="flip"]        { --_from: perspective(900px) rotateX(-16deg); transform-origin: 50% 0; }
+.lu3g-search__panel[data-anim="blur"]        { --_from: scale(1.02); --_from-filter: blur(10px); }
+.lu3g-search__panel[data-anim="none"]        { --_from: scale(1); --_dur: 1ms; }
+
+/* Posizioni (classe scelta dal JS secondo il dispositivo) */
+.lu3g-search__panel.lu3g-pos-icon {           /* --lu3g-left calcolato dal JS: mai fuori dallo schermo */
+	--_w: var(--lu3g-panel-width, 440px);
 }
 
-.lu3g-search__panel.is-anchored.is-open {
-	transform: translateY(0);
+.lu3g-search__panel.lu3g-pos-center {
+	--_cx: -50%;
+	left: 50%;
+}
+
+.lu3g-search__panel.lu3g-pos-left {
+	--_w: var(--lu3g-panel-width, 440px);
+	left: var(--_ox);
+}
+
+.lu3g-search__panel.lu3g-pos-right {
+	--_w: var(--lu3g-panel-width, 440px);
+	right: var(--_ox);
+	left: auto;
+}
+
+.lu3g-search__panel.lu3g-pos-full {
+	right: var(--_ox);
+	left: var(--_ox);
+	width: auto;
+}
+
+.lu3g-search__panel.lu3g-pos-top {
+	top: var(--lu3g-screen-top, 0px);
+	right: 0;
+	left: 0;
+	width: auto;
+	max-height: calc(100vh - var(--lu3g-screen-top, 0px));
+	max-height: min(var(--lu3g-panel-max, 100dvh), calc(100dvh - var(--lu3g-screen-top, 0px)));
+	border-radius: 0 0 var(--_radius) var(--_radius);
+}
+
+.lu3g-search__panel.lu3g-pos-middle {
+	--_cx: -50%;
+	--_cy: -50%;
+	top: calc(50% + var(--lu3g-screen-top, 0px) / 2);
+	left: 50%;
+	max-height: calc(100vh - var(--lu3g-screen-top, 0px) - 2 * var(--_oy));
+	max-height: min(var(--lu3g-panel-max, 100dvh), calc(100dvh - var(--lu3g-screen-top, 0px) - 2 * var(--_oy)));
+}
+
+.lu3g-search__panel.lu3g-pos-bottom {
+	--_cx: -50%;
+	top: auto;
+	bottom: var(--_oy);
+	left: 50%;
+	max-height: calc(100vh - var(--lu3g-screen-top, 0px) - 2 * var(--_oy));
+	max-height: min(var(--lu3g-panel-max, 100dvh), calc(100dvh - var(--lu3g-screen-top, 0px) - 2 * var(--_oy)));
+}
+
+.lu3g-search__panel.lu3g-pos-fullscreen {
+	top: var(--lu3g-screen-top, 0px);
+	right: 0;
+	bottom: 0;
+	left: 0;
+	width: auto;
+	max-height: none;
+	border-radius: 0;
+}
+
+/* Nella pagina: il campo resta dove si trova il widget, i risultati scendono a tendina */
+.lu3g-search.is-inline {
+	display: flex;
+	width: 100%;
+}
+
+.lu3g-search.is-inline .lu3g-search__toggle,
+.lu3g-search.is-inline .lu3g-search__overlay {
+	display: none;
+}
+
+.lu3g-search__panel.lu3g-pos-inline {
+	position: relative;
+	top: auto;
+	left: auto;
+	z-index: 50;
+	width: min(var(--lu3g-panel-width, 100%), 100%);
+	max-height: none;
+	overflow: visible;
+	box-shadow: none;
+	opacity: 1;
+	visibility: visible;
+	filter: none;
+	transform: none;
+	transition: none;
+}
+
+.lu3g-pos-inline .lu3g-search__bar {
+	border-bottom: 0;
+	border-radius: inherit;
+}
+
+.lu3g-pos-inline .lu3g-search__progress {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: 0;
+}
+
+.lu3g-pos-inline .lu3g-search__body {
+	position: absolute;
+	top: calc(100% + 6px);
+	right: 0;
+	left: 0;
+	display: none;
+	max-height: var(--lu3g-panel-max, 60vh);
+	background: var(--_bg);
+	border-radius: var(--_radius);
+	box-shadow: var(--lu3g-panel-shadow, 0 1px 2px rgba(0, 0, 0, 0.04), 0 28px 64px -18px rgba(40, 20, 20, 0.35));
+}
+
+.lu3g-pos-inline.is-open .lu3g-search__body {
+	display: block;
+	animation: lu3g-dropdown var(--_dur) var(--_ease);
+}
+
+@keyframes lu3g-dropdown {
+	from {
+		opacity: 0;
+		transform: var(--_from);
+	}
 }
 
 .lu3g-search__panel *,
@@ -181,15 +323,16 @@ html.lu3g-search-lock body {
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	padding: 14px 14px 14px 18px;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+	padding: var(--lu3g-bar-padding, 14px 14px 14px 18px);
+	background: var(--lu3g-bar-bg, transparent);
+	border-bottom: var(--lu3g-bar-divider-width, 1px) solid var(--lu3g-bar-divider-color, rgba(0, 0, 0, 0.07));
 }
 
 .lu3g-search__bar-icon {
 	display: inline-flex;
 	flex: none;
-	font-size: 18px;
-	color: var(--_muted);
+	font-size: var(--lu3g-bar-icon-size, 18px);
+	color: var(--lu3g-bar-icon-color, var(--_muted));
 }
 
 .lu3g-search__bar-icon svg {
@@ -208,16 +351,16 @@ html.lu3g-search-lock body {
 	outline: 0;
 	background: transparent !important;
 	box-shadow: none !important;
-	color: var(--_text);
+	color: var(--lu3g-input-color, var(--_text));
 	font-family: inherit;
-	font-size: 16px; /* 16px evita lo zoom automatico su iOS */
+	font-size: var(--lu3g-input-size, 16px); /* 16px evita lo zoom automatico su iOS */
 	line-height: 1.4;
 	appearance: none;
 	-webkit-appearance: none;
 }
 
 .lu3g-search__panel .lu3g-search__input::placeholder {
-	color: var(--_muted);
+	color: var(--lu3g-placeholder-color, var(--_muted));
 	opacity: 1;
 }
 
@@ -244,14 +387,14 @@ html.lu3g-search-lock body {
 	border-radius: 50%;
 	background: transparent;
 	box-shadow: none;
-	color: var(--_muted);
+	color: var(--lu3g-close-color, var(--_muted));
 	cursor: pointer;
 	transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .lu3g-search__panel .lu3g-search__close:hover {
 	background: var(--_hover);
-	color: var(--_text);
+	color: var(--lu3g-close-hover, var(--_text));
 }
 
 .lu3g-search__panel .lu3g-search__close:focus-visible {
@@ -303,7 +446,7 @@ html.lu3g-search-lock body {
 	overflow-y: auto;
 	overscroll-behavior: contain;
 	-webkit-overflow-scrolling: touch;
-	padding: 8px;
+	padding: var(--lu3g-body-padding, 8px);
 }
 
 .lu3g-search__hint,
@@ -312,7 +455,7 @@ html.lu3g-search-lock body {
 	margin: 0;
 	padding: 14px 10px;
 	color: var(--_muted);
-	font-size: 14px;
+	font-size: var(--lu3g-message-size, 14px);
 	line-height: 1.5;
 }
 
@@ -320,6 +463,10 @@ html.lu3g-search-lock body {
 .is-empty .lu3g-search__message,
 .is-error .lu3g-search__message {
 	display: block;
+}
+
+.lu3g-search__panel.is-idle .lu3g-search__hint:empty {
+	display: none;
 }
 
 /* Skeleton */
@@ -349,9 +496,9 @@ html.lu3g-search-lock body {
 
 .lu3g-search__sk-thumb {
 	flex: none;
-	width: 52px;
-	height: 52px;
-	border-radius: 8px;
+	width: var(--lu3g-thumb-size, 52px);
+	height: var(--lu3g-thumb-size, 52px);
+	border-radius: var(--lu3g-thumb-radius, 8px);
 }
 
 .lu3g-search__sk-lines {
@@ -399,8 +546,13 @@ html.lu3g-search-lock body {
 	opacity: 0;
 	transform: translateY(4px);
 	animation: lu3g-in 0.28s ease forwards;
-	animation-delay: calc(var(--i, 0) * 30ms);
+	animation-delay: calc(var(--i, 0) * var(--lu3g-results-stagger, 30ms));
 }
+
+[data-results-anim="fade"] .lu3g-search__results li  { transform: none; }
+[data-results-anim="slide"] .lu3g-search__results li { transform: translateX(-14px); }
+[data-results-anim="zoom"] .lu3g-search__results li  { transform: scale(0.94); }
+[data-results-anim="none"] .lu3g-search__results li  { opacity: 1; transform: none; animation: none; }
 
 .lu3g-search__results li::before,
 .lu3g-search__results li::marker {
@@ -417,9 +569,9 @@ html.lu3g-search-lock body {
 .lu3g-search__panel .lu3g-search__item {
 	display: flex;
 	align-items: center;
-	gap: 14px;
-	padding: 8px 10px;
-	border-radius: calc(var(--_radius) * 0.7);
+	gap: var(--lu3g-item-gap, 14px);
+	padding: var(--lu3g-item-padding, 8px 10px);
+	border-radius: var(--lu3g-item-radius, calc(var(--_radius) * 0.7));
 	background: var(--lu3g-item-bg, transparent);
 	color: var(--_text);
 	text-decoration: none;
@@ -439,9 +591,9 @@ html.lu3g-search-lock body {
 
 .lu3g-search__thumb {
 	flex: none;
-	width: 52px;
-	height: 52px;
-	border-radius: 8px;
+	width: var(--lu3g-thumb-size, 52px);
+	height: var(--lu3g-thumb-size, 52px);
+	border-radius: var(--lu3g-thumb-radius, 8px);
 	object-fit: cover;
 	background: rgba(0, 0, 0, 0.05);
 }
@@ -479,7 +631,7 @@ html.lu3g-search-lock body {
 .lu3g-search__panel .lu3g-search__sub {
 	overflow: hidden;
 	color: var(--lu3g-sub-color, var(--_muted));
-	font-size: 12.5px;
+	font-size: var(--lu3g-sub-size, 12.5px);
 	line-height: 1.3;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -516,24 +668,13 @@ html.lu3g-search-lock body {
 /* ---------- Tablet e mobile ---------- */
 
 @media (max-width: 1024px) {
-	.lu3g-search__panel,
-	.lu3g-search__panel.is-anchored {
-		top: calc(var(--lu3g-top, 0px) + 8px);
-		right: 10px;
-		left: 10px;
-		width: auto;
-		max-height: calc(100vh - var(--lu3g-top, 0px) - 20px);
-		max-height: calc(100dvh - var(--lu3g-top, 0px) - 20px);
-		transform: translateY(-10px);
-	}
-
-	.lu3g-search__panel.is-open,
-	.lu3g-search__panel.is-anchored.is-open {
-		transform: translateY(0);
+	.lu3g-search__panel {
+		--_ox: var(--lu3g-panel-offset-x, 10px);
+		--_oy: var(--lu3g-panel-offset-y, 8px);
 	}
 
 	.lu3g-search__bar {
-		padding: 10px 8px 10px 14px;
+		padding: var(--lu3g-bar-padding, 10px 8px 10px 14px);
 	}
 
 	.lu3g-search__panel .lu3g-search__close {
@@ -542,7 +683,7 @@ html.lu3g-search-lock body {
 	}
 
 	.lu3g-search__panel .lu3g-search__item {
-		padding: 10px;
+		padding: var(--lu3g-item-padding, 10px);
 	}
 }
 
@@ -553,6 +694,15 @@ html.lu3g-search-lock body {
 	.lu3g-search__panel,
 	.lu3g-search__progress {
 		transition-duration: 0.01ms !important;
+	}
+
+	.lu3g-search__panel {
+		--_from: scale(1) !important;
+		--_from-filter: none !important;
+	}
+
+	.lu3g-pos-inline.is-open .lu3g-search__body {
+		animation: none;
 	}
 
 	.lu3g-search__results li {

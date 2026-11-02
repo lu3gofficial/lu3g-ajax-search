@@ -85,7 +85,7 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 		$this->add_control( 'meta_keys', array(
 			'label'       => 'Meta field in cui cercare',
 			'type'        => Controls_Manager::TEXT,
-			'placeholder' => 'stilista, codice_modello',
+			'placeholder' => 'marca, codice_prodotto',
 			'label_block' => true,
 			'description' => 'Nomi dei campi JetEngine separati da virgola. Solo campi semplici (testo, select, numero): repeater e checkbox sono salvati serializzati e danno risultati poco precisi.',
 		) );
@@ -131,9 +131,9 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 
 		$this->end_controls_section();
 
-		/* ---------- Contenuto: aspetto e testi ---------- */
+		/* ---------- Contenuto: icona ---------- */
 		$this->start_controls_section( 'section_ui', array(
-			'label' => 'Pannello e testi',
+			'label' => 'Icona',
 		) );
 
 		$this->add_control( 'icon', array(
@@ -145,38 +145,225 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			'description' => 'Vuota = lente predefinita (segue il colore del testo).',
 		) );
 
-		$this->add_control( 'desktop_position', array(
-			'label'   => 'Pannello su desktop',
+		$this->end_controls_section();
+
+		/* ---------- Contenuto: posizione ---------- */
+		$this->start_controls_section( 'section_position', array(
+			'label' => 'Posizione e comportamento',
+		) );
+
+		// Stessa chiave di prima (desktop_position): i valori già salvati restano
+		$this->add_responsive_control( 'desktop_position', array(
+			'label'          => 'Posizione del box',
+			'type'           => Controls_Manager::SELECT,
+			'options'        => array(
+				'icon'       => 'Allineato all\'icona',
+				'center'     => 'Sotto l\'header, al centro',
+				'left'       => 'Sotto l\'header, a sinistra',
+				'right'      => 'Sotto l\'header, a destra',
+				'full'       => 'Sotto l\'header, a tutta larghezza',
+				'top'        => 'In cima allo schermo',
+				'middle'     => 'Al centro dello schermo',
+				'bottom'     => 'In basso',
+				'fullscreen' => 'A tutto schermo',
+				'inline'     => 'Nella pagina, sempre visibile',
+			),
+			'default'        => 'icon',
+			'tablet_default' => 'full',
+			'mobile_default' => 'full',
+			'description'    => 'Si sceglie per ogni dispositivo. "Nella pagina" mostra il campo dove si trova il widget, senza lente, con i risultati a tendina.',
+		) );
+
+		$this->add_responsive_control( 'panel_offset_y', array(
+			'label'      => 'Distanza verticale',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 200 ) ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-panel-offset-y: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_responsive_control( 'panel_offset_x', array(
+			'label'       => 'Distanza dai bordi laterali',
+			'type'        => Controls_Manager::SLIDER,
+			'size_units'  => array( 'px' ),
+			'range'       => array( 'px' => array( 'min' => 0, 'max' => 200 ) ),
+			'description' => 'Il box non esce mai dallo schermo: resta almeno a questa distanza dai bordi.',
+			'selectors'   => array( '{{WRAPPER}}' => '--lu3g-panel-offset-x: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_responsive_control( 'panel_max_height', array(
+			'label'      => 'Altezza massima',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'vh', 'px' ),
+			'range'      => array(
+				'vh' => array( 'min' => 20, 'max' => 100 ),
+				'px' => array( 'min' => 200, 'max' => 1200 ),
+			),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-panel-max: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_control( 'overlay_show', array(
+			'label'        => 'Velo sullo sfondo',
+			'type'         => Controls_Manager::SWITCHER,
+			'return_value' => 'yes',
+			'default'      => 'yes',
+			'description'  => 'Colore e sfocatura si regolano in Stile → Sfondo sfocato. Non si usa con "Nella pagina".',
+		) );
+
+		$this->add_control( 'editor_open', array(
+			'label'        => 'Tieni aperto nell\'editor',
+			'type'         => Controls_Manager::SWITCHER,
+			'return_value' => 'yes',
+			'default'      => '',
+			'description'  => 'Solo per lavorare sulla grafica: nell\'editor il box resta aperto e si aggiorna mentre cambi lo stile. Sul sito non ha effetto.',
+		) );
+
+		$this->end_controls_section();
+
+		/* ---------- Contenuto: animazioni ---------- */
+		$this->start_controls_section( 'section_animation', array(
+			'label' => 'Animazioni',
+		) );
+
+		$this->add_control( 'panel_animation', array(
+			'label'   => 'Apertura del box',
 			'type'    => Controls_Manager::SELECT,
 			'options' => array(
-				'center' => 'Centrato sotto l\'header',
-				'icon'   => 'Allineato all\'icona',
+				'slide-down'  => 'Scende dall\'alto',
+				'slide-up'    => 'Sale dal basso',
+				'slide-left'  => 'Entra da destra',
+				'slide-right' => 'Entra da sinistra',
+				'fade'        => 'Dissolvenza',
+				'zoom'        => 'Zoom in avanti',
+				'zoom-out'    => 'Zoom all\'indietro',
+				'pop'         => 'Rimbalzo',
+				'flip'        => 'Rotazione 3D',
+				'blur'        => 'Da sfocato a nitido',
+				'none'        => 'Nessuna',
 			),
-			'default' => 'icon',
+			'default' => 'slide-down',
+		) );
+
+		$this->add_control( 'panel_anim_duration', array(
+			'label'      => 'Durata',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'ms' ),
+			'range'      => array( 'ms' => array( 'min' => 100, 'max' => 1500, 'step' => 10 ) ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-anim-duration: {{SIZE}}ms;' ),
+		) );
+
+		$this->add_control( 'panel_anim_ease', array(
+			'label'     => 'Andamento',
+			'type'      => Controls_Manager::SELECT,
+			'options'   => array(
+				''                                => 'Predefinito',
+				'linear'                          => 'Costante',
+				'ease-in-out'                     => 'Morbido',
+				'cubic-bezier(0.2, 0.8, 0.2, 1)'  => 'Veloce, poi rallenta',
+				'cubic-bezier(0.34, 1.56, 0.64, 1)' => 'Con rimbalzo',
+			),
+			'default'   => '',
+			'selectors' => array( '{{WRAPPER}}' => '--lu3g-anim-ease: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'results_animation', array(
+			'label'     => 'Comparsa dei risultati',
+			'type'      => Controls_Manager::SELECT,
+			'separator' => 'before',
+			'options'   => array(
+				'fade-up' => 'Salgono',
+				'fade'    => 'Dissolvenza',
+				'slide'   => 'Da sinistra',
+				'zoom'    => 'Zoom',
+				'none'    => 'Nessuna',
+			),
+			'default'   => 'fade-up',
+		) );
+
+		$this->add_control( 'results_stagger', array(
+			'label'      => 'Ritardo tra un risultato e l\'altro',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'ms' ),
+			'range'      => array( 'ms' => array( 'min' => 0, 'max' => 200, 'step' => 5 ) ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-results-stagger: {{SIZE}}ms;' ),
+		) );
+
+		$this->end_controls_section();
+
+		/* ---------- Contenuto: testi ---------- */
+		$this->start_controls_section( 'section_texts', array(
+			'label' => 'Testi',
 		) );
 
 		$this->add_control( 'placeholder', array(
-			'label'   => 'Placeholder',
-			'type'    => Controls_Manager::TEXT,
-			'default' => 'Cerca un abito, uno stilista…',
+			'label'       => 'Placeholder',
+			'type'        => Controls_Manager::TEXT,
+			'default'     => 'Cerca…',
+			'label_block' => true,
 		) );
 
 		$this->add_control( 'hint_text', array(
-			'label'   => 'Testo iniziale',
-			'type'    => Controls_Manager::TEXT,
-			'default' => 'Scrivi almeno 2 lettere per iniziare.',
+			'label'       => 'Testo iniziale',
+			'type'        => Controls_Manager::TEXT,
+			'default'     => 'Scrivi almeno %d lettere per iniziare.',
+			'label_block' => true,
+			'description' => '%d diventa il numero di caratteri minimi. Vuoto = nessun testo.',
 		) );
 
 		$this->add_control( 'empty_text', array(
-			'label'   => 'Nessun risultato',
-			'type'    => Controls_Manager::TEXT,
-			'default' => 'Nessun risultato. Prova con un\'altra parola o con il nome di una categoria.',
+			'label'       => 'Nessun risultato',
+			'type'        => Controls_Manager::TEXT,
+			'default'     => 'Nessun risultato. Prova con un\'altra parola.',
+			'label_block' => true,
 		) );
 
 		$this->add_control( 'error_text', array(
-			'label'   => 'Errore',
+			'label'       => 'Errore',
+			'type'        => Controls_Manager::TEXT,
+			'default'     => 'La ricerca non ha risposto. Controlla la connessione e riprova.',
+			'label_block' => true,
+		) );
+
+		$this->add_control( 'texts_a11y_heading', array(
+			'label'     => 'Letti dagli screen reader',
+			'type'      => Controls_Manager::HEADING,
+			'separator' => 'before',
+		) );
+
+		$this->add_control( 'results_text', array(
+			'label'   => 'Più risultati',
 			'type'    => Controls_Manager::TEXT,
-			'default' => 'La ricerca non ha risposto. Controlla la connessione e riprova.',
+			'default' => '%d risultati',
+		) );
+
+		$this->add_control( 'result_text', array(
+			'label'   => 'Un risultato',
+			'type'    => Controls_Manager::TEXT,
+			'default' => '1 risultato',
+		) );
+
+		$this->add_control( 'open_label', array(
+			'label'   => 'Apri',
+			'type'    => Controls_Manager::TEXT,
+			'default' => 'Apri la ricerca',
+		) );
+
+		$this->add_control( 'close_label', array(
+			'label'   => 'Chiudi',
+			'type'    => Controls_Manager::TEXT,
+			'default' => 'Chiudi la ricerca',
+		) );
+
+		$this->add_control( 'dialog_label', array(
+			'label'   => 'Nome del box',
+			'type'    => Controls_Manager::TEXT,
+			'default' => 'Ricerca',
+		) );
+
+		$this->add_control( 'results_label', array(
+			'label'   => 'Nome dell\'elenco',
+			'type'    => Controls_Manager::TEXT,
+			'default' => 'Risultati',
 		) );
 
 		$this->end_controls_section();
@@ -256,20 +443,182 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			'selectors'   => array( '{{WRAPPER}}' => '--lu3g-accent: {{VALUE}};' ),
 		) );
 
-		$this->add_control( 'panel_radius', array(
+		$this->add_control( 'panel_font', array(
+			'label'     => 'Font',
+			'type'      => Controls_Manager::FONT,
+			'default'   => '',
+			'selectors' => array( '{{WRAPPER}}' => '--lu3g-panel-font: "{{VALUE}}", sans-serif;' ),
+		) );
+
+		// Stesse chiavi di prima (panel_radius, panel_width): ora si regolano per dispositivo
+		$this->add_responsive_control( 'panel_radius', array(
 			'label'      => 'Arrotondamento',
 			'type'       => Controls_Manager::SLIDER,
 			'size_units' => array( 'px' ),
-			'range'      => array( 'px' => array( 'min' => 0, 'max' => 32 ) ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 48 ) ),
 			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-panel-radius: {{SIZE}}{{UNIT}};' ),
 		) );
 
-		$this->add_control( 'panel_width', array(
-			'label'       => 'Larghezza su desktop',
+		$this->add_responsive_control( 'panel_width', array(
+			'label'       => 'Larghezza',
+			'type'        => Controls_Manager::SLIDER,
+			'size_units'  => array( 'px', 'vw' ),
+			'range'       => array(
+				'px' => array( 'min' => 240, 'max' => 1400 ),
+				'vw' => array( 'min' => 20, 'max' => 100 ),
+			),
+			'description' => 'Non vale per le posizioni a tutta larghezza.',
+			'selectors'   => array( '{{WRAPPER}}' => '--lu3g-panel-width: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_responsive_control( 'panel_padding', array(
+			'label'      => 'Spaziatura interna dei risultati',
+			'type'       => Controls_Manager::DIMENSIONS,
+			'size_units' => array( 'px' ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-body-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+		) );
+
+		$this->add_control( 'panel_border_width', array(
+			'label'      => 'Spessore del bordo',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 10 ) ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-panel-border-width: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_control( 'panel_border_color', array(
+			'label'     => 'Colore del bordo',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( '{{WRAPPER}}' => '--lu3g-panel-border-color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'panel_shadow', array(
+			'label'                => 'Ombra',
+			'type'                 => Controls_Manager::SELECT,
+			'options'              => array(
+				''       => 'Predefinita',
+				'none'   => 'Nessuna',
+				'light'  => 'Leggera',
+				'strong' => 'Forte',
+			),
+			'default'              => '',
+			'selectors_dictionary' => array(
+				'none'   => 'none',
+				'light'  => '0 8px 24px -8px rgba(0, 0, 0, 0.18)',
+				'strong' => '0 40px 90px -16px rgba(0, 0, 0, 0.55)',
+			),
+			'selectors'            => array( '{{WRAPPER}}' => '--lu3g-panel-shadow: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'panel_glass', array(
+			'label'       => 'Effetto vetro',
 			'type'        => Controls_Manager::SLIDER,
 			'size_units'  => array( 'px' ),
-			'range'       => array( 'px' => array( 'min' => 320, 'max' => 900 ) ),
-			'selectors'   => array( '{{WRAPPER}}' => '--lu3g-panel-width: {{SIZE}}{{UNIT}};' ),
+			'range'       => array( 'px' => array( 'min' => 0, 'max' => 40 ) ),
+			'description' => 'Sfoca ciò che sta dietro al box. Si vede solo con uno sfondo semitrasparente.',
+			'selectors'   => array( '{{WRAPPER}}' => '--lu3g-panel-glass: blur({{SIZE}}{{UNIT}});' ),
+		) );
+
+		$this->end_controls_section();
+
+		/* ---------- Stile: campo di ricerca ---------- */
+		$this->start_controls_section( 'style_bar', array(
+			'label' => 'Campo di ricerca',
+			'tab'   => Controls_Manager::TAB_STYLE,
+		) );
+
+		$this->add_control( 'bar_bg', array(
+			'label'     => 'Sfondo',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( '{{WRAPPER}}' => '--lu3g-bar-bg: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'input_color', array(
+			'label'     => 'Colore del testo',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( '{{WRAPPER}}' => '--lu3g-input-color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'placeholder_color', array(
+			'label'     => 'Colore del placeholder',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( '{{WRAPPER}}' => '--lu3g-placeholder-color: {{VALUE}};' ),
+		) );
+
+		$this->add_responsive_control( 'input_size', array(
+			'label'       => 'Dimensione del testo',
+			'type'        => Controls_Manager::SLIDER,
+			'size_units'  => array( 'px' ),
+			'range'       => array( 'px' => array( 'min' => 12, 'max' => 40 ) ),
+			'description' => 'Su iPhone, sotto i 16px il telefono ingrandisce la pagina quando si tocca il campo.',
+			'selectors'   => array( '{{WRAPPER}}' => '--lu3g-input-size: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_responsive_control( 'bar_padding', array(
+			'label'      => 'Spaziatura interna',
+			'type'       => Controls_Manager::DIMENSIONS,
+			'size_units' => array( 'px' ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-bar-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+		) );
+
+		$this->add_control( 'bar_divider_width', array(
+			'label'      => 'Spessore della linea sotto il campo',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 6 ) ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-bar-divider-width: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_control( 'bar_divider_color', array(
+			'label'     => 'Colore della linea',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( '{{WRAPPER}}' => '--lu3g-bar-divider-color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'bar_icon_show', array(
+			'label'        => 'Lente nel campo',
+			'type'         => Controls_Manager::SWITCHER,
+			'return_value' => 'yes',
+			'default'      => 'yes',
+			'separator'    => 'before',
+		) );
+
+		$this->add_control( 'bar_icon_color', array(
+			'label'     => 'Colore della lente',
+			'type'      => Controls_Manager::COLOR,
+			'condition' => array( 'bar_icon_show' => 'yes' ),
+			'selectors' => array( '{{WRAPPER}}' => '--lu3g-bar-icon-color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'bar_icon_size', array(
+			'label'      => 'Dimensione della lente',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 10, 'max' => 40 ) ),
+			'condition'  => array( 'bar_icon_show' => 'yes' ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-bar-icon-size: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_control( 'close_color', array(
+			'label'     => 'Colore della X',
+			'type'      => Controls_Manager::COLOR,
+			'separator' => 'before',
+			'selectors' => array( '{{WRAPPER}}' => '--lu3g-close-color: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'close_color_hover', array(
+			'label'     => 'Colore della X in hover',
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array( '{{WRAPPER}}' => '--lu3g-close-hover: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'message_size', array(
+			'label'      => 'Dimensione dei messaggi',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 11, 'max' => 24 ) ),
+			'separator'  => 'before',
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-message-size: {{SIZE}}{{UNIT}};' ),
 		) );
 
 		$this->end_controls_section();
@@ -325,6 +674,53 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 				'em' => array( 'min' => -0.1, 'max' => 0.5, 'step' => 0.01 ),
 			),
 			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-title-spacing: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_responsive_control( 'sub_size', array(
+			'label'      => 'Dimensione sottotitolo',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 10, 'max' => 22 ) ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-sub-size: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_responsive_control( 'thumb_size', array(
+			'label'      => 'Dimensione immagine',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 24, 'max' => 160 ) ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-thumb-size: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_control( 'thumb_radius', array(
+			'label'      => 'Arrotondamento immagine',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 80 ) ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-thumb-radius: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_responsive_control( 'item_padding', array(
+			'label'      => 'Spaziatura del risultato',
+			'type'       => Controls_Manager::DIMENSIONS,
+			'size_units' => array( 'px' ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-item-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+		) );
+
+		$this->add_control( 'item_gap', array(
+			'label'      => 'Distanza immagine e testo',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 48 ) ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-item-gap: {{SIZE}}{{UNIT}};' ),
+		) );
+
+		$this->add_control( 'item_radius', array(
+			'label'      => 'Arrotondamento del risultato',
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 32 ) ),
+			'selectors'  => array( '{{WRAPPER}}' => '--lu3g-item-radius: {{SIZE}}{{UNIT}};' ),
 		) );
 
 		$this->start_controls_tabs( 'results_tabs' );
@@ -448,21 +844,47 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			'min'    => $min,
 		) );
 
+		$text = static function ( $key, $fallback ) use ( $s ) {
+			$value = $s[ $key ] ?? '';
+			return '' !== (string) $value ? (string) $value : $fallback;
+		};
+
 		$i18n = array(
-			'results' => '%d risultati',
-			'result'  => '1 risultato',
+			'results' => $text( 'results_text', '%d risultati' ),
+			'result'  => $text( 'result_text', '1 risultato' ),
 			'empty'   => (string) ( $s['empty_text'] ?? '' ),
 			'error'   => (string) ( $s['error_text'] ?? '' ),
-			'open'    => 'Apri la ricerca',
-			'close'   => 'Chiudi la ricerca',
+			'open'    => $text( 'open_label', 'Apri la ricerca' ),
+			'close'   => $text( 'close_label', 'Chiudi la ricerca' ),
 		);
+
+		$hint = str_replace( '%d', (string) $min, (string) ( $s['hint_text'] ?? '' ) );
+
+		// Posizione per dispositivo: vuoto = eredita dal dispositivo più grande
+		$allowed    = array( 'icon', 'center', 'left', 'right', 'full', 'top', 'middle', 'bottom', 'fullscreen', 'inline' );
+		$pos_of     = static function ( $key, $fallback ) use ( $s, $allowed ) {
+			$value = (string) ( $s[ $key ] ?? '' );
+			return in_array( $value, $allowed, true ) ? $value : $fallback;
+		};
+		$pos_desk   = $pos_of( 'desktop_position', 'icon' );
+		$pos_tablet = $pos_of( 'desktop_position_tablet', $pos_desk );
+		$positions  = array(
+			'desktop' => $pos_desk,
+			'tablet'  => $pos_tablet,
+			'mobile'  => $pos_of( 'desktop_position_mobile', $pos_tablet ),
+		);
+
+		$anims         = array( 'slide-down', 'slide-up', 'slide-left', 'slide-right', 'fade', 'zoom', 'zoom-out', 'pop', 'flip', 'blur', 'none' );
+		$panel_anim    = in_array( $s['panel_animation'] ?? '', $anims, true ) ? $s['panel_animation'] : 'slide-down';
+		$results_anim  = in_array( $s['results_animation'] ?? '', array( 'fade-up', 'fade', 'slide', 'zoom', 'none' ), true ) ? $s['results_animation'] : 'fade-up';
+		$is_editor     = \Elementor\Plugin::$instance->editor->is_edit_mode();
 
 		// ID univoci anche con più copie dello stesso widget nella pagina
 		$uid        = $id . '-' . wp_unique_id();
 		$panel_id   = 'lu3g-search-panel-' . $uid;
 		$results_id = 'lu3g-search-results-' . $uid;
 
-		if ( empty( $s['post_types'] ) && \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
+		if ( empty( $s['post_types'] ) && $is_editor ) {
 			echo '<div class="lu3g-search__notice">LU3G Ricerca Ajax: scegli almeno un post type in "Cerca in".</div>';
 		}
 		?>
@@ -470,7 +892,10 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			data-config="<?php echo esc_attr( $payload ); ?>"
 			data-sig="<?php echo esc_attr( $signature ); ?>"
 			data-min="<?php echo esc_attr( $min ); ?>"
-			data-desktop-pos="<?php echo esc_attr( $s['desktop_position'] ?? 'icon' ); ?>"
+			data-pos="<?php echo esc_attr( wp_json_encode( $positions ) ); ?>"
+			data-bp="<?php echo esc_attr( wp_json_encode( self::breakpoints() ) ); ?>"
+			data-overlay="<?php echo 'yes' === ( $s['overlay_show'] ?? 'yes' ) ? 'yes' : 'no'; ?>"
+			<?php if ( $is_editor && 'yes' === ( $s['editor_open'] ?? '' ) ) : ?>data-editor-open="yes"<?php endif; ?>
 			data-focus-ring="<?php echo 'yes' === ( $s['focus_ring'] ?? 'yes' ) ? 'yes' : 'no'; ?>"
 			data-i18n="<?php echo esc_attr( wp_json_encode( $i18n ) ); ?>">
 
@@ -490,13 +915,17 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			<div class="lu3g-search__overlay" aria-hidden="true"></div>
 
 			<div class="lu3g-search__panel is-idle" id="<?php echo esc_attr( $panel_id ); ?>"
-				role="dialog" aria-modal="true" aria-label="Ricerca">
+				data-anim="<?php echo esc_attr( $panel_anim ); ?>"
+				data-results-anim="<?php echo esc_attr( $results_anim ); ?>"
+				role="dialog" aria-modal="true" aria-label="<?php echo esc_attr( $text( 'dialog_label', 'Ricerca' ) ); ?>">
 
 				<div class="lu3g-search__bar">
-					<span class="lu3g-search__bar-icon" aria-hidden="true"><?php echo self::lens_svg(); // phpcs:ignore ?></span>
+					<?php if ( 'yes' === ( $s['bar_icon_show'] ?? 'yes' ) ) : ?>
+						<span class="lu3g-search__bar-icon" aria-hidden="true"><?php echo self::lens_svg(); // phpcs:ignore ?></span>
+					<?php endif; ?>
 					<input type="search" class="lu3g-search__input"
 						placeholder="<?php echo esc_attr( $s['placeholder'] ?? '' ); ?>"
-						aria-label="<?php echo esc_attr( $s['placeholder'] ?: 'Cerca' ); ?>"
+						aria-label="<?php echo esc_attr( $text( 'placeholder', 'Cerca' ) ); ?>"
 						autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"
 						role="combobox" aria-autocomplete="list" aria-expanded="false"
 						aria-controls="<?php echo esc_attr( $results_id ); ?>">
@@ -508,7 +937,7 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 				<div class="lu3g-search__progress" aria-hidden="true"></div>
 
 				<div class="lu3g-search__body">
-					<p class="lu3g-search__hint"><?php echo esc_html( $s['hint_text'] ?? '' ); ?></p>
+					<p class="lu3g-search__hint"><?php echo esc_html( $hint ); ?></p>
 
 					<div class="lu3g-search__skeleton" aria-hidden="true">
 						<?php for ( $i = 0; $i < 3; $i++ ) : ?>
@@ -519,7 +948,7 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 						<?php endfor; ?>
 					</div>
 
-					<ul class="lu3g-search__results" id="<?php echo esc_attr( $results_id ); ?>" role="listbox" aria-label="Risultati"></ul>
+					<ul class="lu3g-search__results" id="<?php echo esc_attr( $results_id ); ?>" role="listbox" aria-label="<?php echo esc_attr( $text( 'results_label', 'Risultati' ) ); ?>"></ul>
 
 					<p class="lu3g-search__message"></p>
 				</div>
@@ -528,6 +957,21 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			</div>
 		</div>
 		<?php
+	}
+
+	/** Breakpoint attivi di Elementor, per scegliere la posizione giusta nel browser. */
+	private static function breakpoints() {
+		$out     = array( 'mobile' => 767, 'tablet' => 1024 );
+		$manager = \Elementor\Plugin::$instance->breakpoints ?? null;
+		if ( $manager ) {
+			foreach ( array_keys( $out ) as $name ) {
+				$bp = $manager->get_breakpoints( $name );
+				if ( $bp ) {
+					$out[ $name ] = (int) $bp->get_value();
+				}
+			}
+		}
+		return $out;
 	}
 
 	private static function lens_svg() {
