@@ -152,6 +152,36 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			'label' => 'Posizione e comportamento',
 		) );
 
+		$this->add_responsive_control( 'display_mode', array(
+			'label'          => 'Mostra come',
+			'type'           => Controls_Manager::SELECT,
+			'options'        => array(
+				'icon' => 'Icona',
+				'bar'  => 'Barra di input',
+			),
+			'default'        => 'icon',
+			'tablet_default' => 'icon',
+			'mobile_default' => 'icon',
+			'description'    => 'Si sceglie per ogni dispositivo. Con "Barra di input" il campo sta dove si trova il widget e i risultati scendono a tendina.',
+		) );
+
+		$this->add_responsive_control( 'bar_align', array(
+			'label'                => 'Allineamento della barra',
+			'type'                 => Controls_Manager::CHOOSE,
+			'options'              => array(
+				'left'   => array( 'title' => 'Sinistra', 'icon' => 'eicon-text-align-left' ),
+				'center' => array( 'title' => 'Centro', 'icon' => 'eicon-text-align-center' ),
+				'right'  => array( 'title' => 'Destra', 'icon' => 'eicon-text-align-right' ),
+			),
+			'selectors_dictionary' => array(
+				'left'   => 'flex-start',
+				'center' => 'center',
+				'right'  => 'flex-end',
+			),
+			'description'          => 'Si nota quando la barra è più stretta del suo contenitore: la larghezza si regola in Stile → Pannello.',
+			'selectors'            => array( '{{WRAPPER}}' => '--lu3g-inline-align: {{VALUE}};' ),
+		) );
+
 		// Stessa chiave di prima (desktop_position): i valori già salvati restano
 		$this->add_responsive_control( 'desktop_position', array(
 			'label'          => 'Posizione del box',
@@ -171,7 +201,7 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			'default'        => 'icon',
 			'tablet_default' => 'full',
 			'mobile_default' => 'full',
-			'description'    => 'Si sceglie per ogni dispositivo. "Nella pagina" mostra il campo dove si trova il widget, senza lente, con i risultati a tendina.',
+			'description'    => 'Dove si apre il box quando si clicca l\'icona. Non vale per i dispositivi con "Barra di input".',
 		) );
 
 		$this->add_responsive_control( 'panel_offset_y', array(
@@ -873,6 +903,12 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			'tablet'  => $pos_tablet,
 			'mobile'  => $pos_of( 'desktop_position_mobile', $pos_tablet ),
 		);
+		// "Barra di input" è la modalità "Nella pagina", qualunque sia la posizione scelta
+		foreach ( array( 'desktop' => 'display_mode', 'tablet' => 'display_mode_tablet', 'mobile' => 'display_mode_mobile' ) as $device => $key ) {
+			if ( 'bar' === ( $s[ $key ] ?? '' ) ) {
+				$positions[ $device ] = 'inline';
+			}
+		}
 
 		$anims         = array( 'slide-down', 'slide-up', 'slide-left', 'slide-right', 'fade', 'zoom', 'zoom-out', 'pop', 'flip', 'blur', 'none' );
 		$panel_anim    = in_array( $s['panel_animation'] ?? '', $anims, true ) ? $s['panel_animation'] : 'slide-down';

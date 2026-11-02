@@ -1,5 +1,10 @@
 # Registro delle modifiche
 
+## 1.4.0
+- Nuovo controllo "Mostra come: Icona / Barra di input", per desktop, tablet e mobile: la barra prende il posto della lente e il campo resta dove si trova il widget. I widget esistenti restano con l'icona.
+- Allineamento della barra (sinistra, centro, destra), per dispositivo.
+- La tendina dei risultati sta nel <body> mentre è aperta: nell'header non viene più tagliata né coperta da altri elementi.
+
 ## 1.3.0
 - Corretto: con "Allineato all'icona" il box usciva dal bordo sinistro dello schermo quando l'icona era a sinistra. Ora resta sempre dentro lo schermo.
 - Posizione del box scelta per desktop, tablet e mobile: allineato all'icona; sotto l'header al centro, a sinistra, a destra o a tutta larghezza; in cima allo schermo; al centro dello schermo; in basso; a tutto schermo; nella pagina, sempre visibile con i risultati a tendina. Distanze e altezza massima regolabili per dispositivo. I widget già salvati mantengono la loro posizione.

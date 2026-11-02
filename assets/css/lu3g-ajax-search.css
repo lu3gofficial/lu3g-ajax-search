@@ -247,9 +247,10 @@ html.lu3g-search-lock body {
 	border-radius: 0;
 }
 
-/* Nella pagina: il campo resta dove si trova il widget, i risultati scendono a tendina */
+/* Barra di input: il campo resta dove si trova il widget, i risultati scendono a tendina */
 .lu3g-search.is-inline {
 	display: flex;
+	justify-content: var(--lu3g-inline-align, flex-start);
 	width: 100%;
 }
 
@@ -288,20 +289,25 @@ html.lu3g-search-lock body {
 }
 
 .lu3g-pos-inline .lu3g-search__body {
-	position: absolute;
-	top: calc(100% + 6px);
-	right: 0;
-	left: 0;
 	display: none;
-	max-height: var(--lu3g-panel-max, 60vh);
-	background: var(--_bg);
-	border-radius: var(--_radius);
-	box-shadow: var(--lu3g-panel-shadow, 0 1px 2px rgba(0, 0, 0, 0.04), 0 28px 64px -18px rgba(40, 20, 20, 0.35));
 }
 
-.lu3g-pos-inline.is-open .lu3g-search__body {
-	display: block;
+/* Tendina: finché è aperta sta nel <body>, così header e contenitori non la tagliano né la coprono */
+.lu3g-search__panel.lu3g-search__dropdown {
+	top: var(--lu3g-dd-top, 0px);
+	left: var(--lu3g-dd-left, 0px);
+	width: var(--lu3g-dd-width, 320px);
+	max-height: var(--lu3g-dd-max, 60vh);
+	opacity: 1;
+	visibility: visible;
+	filter: none;
+	transform: none;
+	transition: none;
 	animation: lu3g-dropdown var(--_dur) var(--_ease);
+}
+
+.lu3g-search__dropdown .lu3g-search__body {
+	display: block;
 }
 
 @keyframes lu3g-dropdown {
@@ -701,7 +707,7 @@ html.lu3g-search-lock body {
 		--_from-filter: none !important;
 	}
 
-	.lu3g-pos-inline.is-open .lu3g-search__body {
+	.lu3g-search__panel.lu3g-search__dropdown {
 		animation: none;
 	}
 

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       LU3G Ajax Search
  * Description:       Widget Elementor di ricerca Ajax per CPT (JetEngine compatibile): lente che apre un pannello di ricerca con effetto blur, risultati live e link al dettaglio.
- * Version:           1.3.0
+ * Version:           1.4.0
  * Plugin URI:        https://github.com/lu3gofficial/lu3g-ajax-search
  * Update URI:        https://github.com/lu3gofficial/lu3g-ajax-search
  * Author:            LU3G Agenzia Web
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LU3G_SEARCH_VERSION', '1.3.0' );
+define( 'LU3G_SEARCH_VERSION', '1.4.0' );
 define( 'LU3G_SEARCH_FILE', __FILE__ );
 define( 'LU3G_SEARCH_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LU3G_SEARCH_URL', plugin_dir_url( __FILE__ ) );

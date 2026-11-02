@@ -6,7 +6,8 @@
  *   transform o backdrop-filter dell'header); alla chiusura torna nel widget.
  *   Ogni copia del widget è indipendente e rispetta la visibilità responsive.
  * - La posizione si sceglie per dispositivo (data-pos) e non esce mai dallo schermo.
- *   "Nella pagina" (inline): nessuna lente né spostamento, i risultati scendono a tendina.
+ *   Barra di input (inline): nessuna lente, il campo resta nel widget; solo la tendina dei
+ *   risultati va nel <body> mentre è aperta, così l'header non la taglia né la copre.
  * - Dai caratteri minimi in poi: blur pieno, barra di caricamento + skeleton,
  *   poi i risultati. Clic sul risultato → pagina di dettaglio.
  * - Tastiera: frecce su/giù, Invio, Esc.
@@ -24,6 +25,7 @@
     '--lu3g-panel-muted',
     '--lu3g-panel-radius',
     '--lu3g-panel-width',
+    '--lu3g-inline-align',
     '--lu3g-panel-offset-x',
     '--lu3g-panel-offset-y',
     '--lu3g-panel-max',
@@ -119,6 +121,8 @@
       this.lista = this.panel.querySelector('.lu3g-search__results');
       this.messaggio = this.panel.querySelector('.lu3g-search__message');
       this.live = this.panel.querySelector('.lu3g-search__live');
+      this.corpo = this.panel.querySelector('.lu3g-search__body');
+      this.tendina = null;
 
       this.min = parseInt(root.dataset.min, 10) || 2;
       this.posizioni = {};
@@ -154,7 +158,8 @@
           if (!self.aperto) self.open();
           self.applicaModo();
           self.copiaVariabili();
-          if (!self.inline) self.posiziona();
+          if (self.inline) self.posizionaTendina();
+          else self.posiziona();
         }, 400);
         this.open();
       }
@@ -191,6 +196,50 @@
         this.panel.classList.remove('is-open');
         void this.panel.offsetWidth;
       }
+    }
+
+    // Tendina della barra di input: un contenitore nel <body> che riceve i risultati
+    apriTendina() {
+      if (!this.tendina) {
+        this.tendina = document.createElement('div');
+        this.tendina.className = 'lu3g-search__panel lu3g-search__dropdown';
+        this.tendina.dataset.anim = this.panel.dataset.anim || '';
+        this.tendina.dataset.resultsAnim = this.panel.dataset.resultsAnim || '';
+        if (this.apertoInEditor) this.tendina.style.pointerEvents = 'none';
+      }
+      this.sincronizzaTendina();
+      this.tendina.append(this.corpo);
+      document.body.append(this.tendina);
+      this.copiaVariabili();
+      this.posizionaTendina();
+    }
+
+    chiudiTendina() {
+      if (!this.tendina || !this.tendina.isConnected) return;
+      this.panel.insertBefore(this.corpo, this.live);
+      this.tendina.remove();
+    }
+
+    // Gli stati (caricamento, risultati, vuoto...) decidono cosa si vede dentro la tendina
+    sincronizzaTendina() {
+      if (!this.tendina) return;
+      const tendina = this.tendina;
+      const panel = this.panel;
+      STATI.forEach(function (nome) { tendina.classList.toggle(nome, panel.classList.contains(nome)); });
+    }
+
+    posizionaTendina() {
+      if (!this.tendina || !this.tendina.isConnected) return;
+      const r = this.panel.getBoundingClientRect();
+      const spazio = Math.max(120, window.innerHeight - r.bottom - 22);
+      const massimo = parseFloat(getComputedStyle(this.panel).getPropertyValue('--lu3g-panel-max'));
+      const unita = getComputedStyle(this.panel).getPropertyValue('--lu3g-panel-max').trim().slice(-2);
+      const scelto = isNaN(massimo) ? window.innerHeight * 0.6 : (unita === 'vh' ? window.innerHeight * massimo / 100 : massimo);
+      const s = this.tendina.style;
+      s.setProperty('--lu3g-dd-top', Math.round(r.bottom + 6) + 'px');
+      s.setProperty('--lu3g-dd-left', Math.round(r.left) + 'px');
+      s.setProperty('--lu3g-dd-width', Math.round(r.width) + 'px');
+      s.setProperty('--lu3g-dd-max', Math.round(Math.min(scelto, spazio)) + 'px');
     }
 
     durataAnimazione() {
@@ -237,6 +286,7 @@
       window.removeEventListener('resize', this.alRidimensionamento);
       window.removeEventListener('scroll', this.alRidimensionamento);
       document.removeEventListener('pointerdown', this.alClicFuori, true);
+      this.chiudiTendina();
       this.overlay.remove();
       this.panel.remove();
       if (istanzaAperta === this) {
@@ -283,6 +333,7 @@
       this.alClicFuori = function (e) {
         if (!self.aperto || self.apertoInEditor) return;
         if (self.panel.contains(e.target) || self.toggle.contains(e.target)) return;
+        if (self.tendina && self.tendina.contains(e.target)) return;
         self.close(false);
       };
       document.addEventListener('pointerdown', this.alClicFuori, true);
@@ -299,7 +350,8 @@
         requestAnimationFrame(function () {
           self.inAttesa = false;
           self.copiaVariabili(); // i valori responsive possono cambiare col breakpoint
-          self.posiziona();
+          if (self.inline) self.posizionaTendina();
+          else self.posiziona();
         });
       };
       this.alRidimensionamento = riposiziona;
@@ -334,7 +386,10 @@
       this.toggle.setAttribute('aria-expanded', 'true');
       this.toggle.setAttribute('aria-label', this.testi.close || 'Chiudi la ricerca');
 
-      if (this.inline) return; // il focus è già nel campo
+      if (this.inline) {
+        this.apriTendina(); // il focus è già nel campo
+        return;
+      }
 
       if (this.dispositivo() !== 'desktop' && !this.apertoInEditor) {
         document.documentElement.classList.add('lu3g-search-lock');
@@ -355,6 +410,7 @@
       if (this.controller) this.controller.abort();
       clearTimeout(this.timer);
 
+      this.chiudiTendina();
       this.root.classList.remove('is-open');
       this.panel.classList.remove('is-open');
       this.overlay.classList.remove('is-open', 'is-active');
@@ -376,6 +432,7 @@
     copiaVariabili() {
       const cs = getComputedStyle(this.root);
       const destinazioni = [this.panel, this.overlay];
+      if (this.tendina) destinazioni.push(this.tendina);
 
       VARS.forEach(function (nome) {
         const valore = cs.getPropertyValue(nome).trim();
@@ -569,6 +626,7 @@
     stato(nome) {
       this.panel.classList.remove.apply(this.panel.classList, STATI);
       this.panel.classList.add(nome);
+      this.sincronizzaTendina();
     }
 
     annuncia(testo) {
