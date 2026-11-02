@@ -1,5 +1,9 @@
 # Registro delle modifiche
 
+## 1.6.0
+- Stile → Risultati, "Troncare il titolo dopo": 1, 2, 3 o 4 righe, oppure mai, per desktop, tablet e mobile. Il predefinito resta 1 riga con "…".
+- "Numero massimo di caratteri del titolo": taglia all'ultima parola intera e aggiunge "…"; il titolo completo resta visibile passando il mouse.
+
 ## 1.5.0
 - Nuova sezione Stile → Barra di input: larghezza, altezza, spaziature, distanza tra lente e testo, arrotondamento (anche angolo per angolo), caratteri completi e bordo. Con le schede Normale, Hover e Attiva: sfondo, colori di testo e lente, bordo e ombra.
 - Lente a sinistra o a destra del testo.

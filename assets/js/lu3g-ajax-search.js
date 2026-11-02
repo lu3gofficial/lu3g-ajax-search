@@ -64,6 +64,7 @@
     '--lu3g-title-color',
     '--lu3g-title-hover',
     '--lu3g-title-size',
+    '--lu3g-title-lines',
     '--lu3g-title-weight',
     '--lu3g-title-transform',
     '--lu3g-title-spacing',
@@ -111,6 +112,15 @@
     return frag;
   }
 
+  // Limite di caratteri: taglia all'ultima parola intera, se non è troppo indietro
+  function tronca(testo, massimo) {
+    const lettere = Array.from(testo);
+    if (!massimo || lettere.length <= massimo) return testo;
+    const taglio = lettere.slice(0, massimo).join('');
+    const spazio = taglio.lastIndexOf(' ');
+    return (spazio > taglio.length * 0.6 ? taglio.slice(0, spazio) : taglio).replace(/[\s,;:.\-–—|]+$/, '') + '…';
+  }
+
   class Lu3gSearch {
     constructor(root) {
       this.root = root;
@@ -126,6 +136,7 @@
       this.tendina = null;
 
       this.min = parseInt(root.dataset.min, 10) || 2;
+      this.titoloMax = parseInt(root.dataset.titleMax, 10) || 0;
       this.posizioni = {};
       this.bp = { mobile: 767, tablet: 1024 };
       try { this.posizioni = JSON.parse(root.dataset.pos || '{}'); } catch (e) { this.posizioni = {}; }
@@ -592,7 +603,10 @@
 
         const titolo = document.createElement('span');
         titolo.className = 'lu3g-search__title';
-        titolo.append(evidenzia(r.title || '', q));
+        const completo = r.title || '';
+        const breve = tronca(completo, self.titoloMax);
+        if (breve !== completo) a.title = completo;
+        titolo.append(evidenzia(breve, q));
         testo.append(titolo);
 
         if (r.sub) {

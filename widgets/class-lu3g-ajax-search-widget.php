@@ -870,6 +870,32 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			'tab'   => Controls_Manager::TAB_STYLE,
 		) );
 
+		$this->add_responsive_control( 'title_lines', array(
+			'label'          => 'Troncare il titolo dopo',
+			'type'           => Controls_Manager::SELECT,
+			'options'        => array(
+				'1'    => '1 riga',
+				'2'    => '2 righe',
+				'3'    => '3 righe',
+				'4'    => '4 righe',
+				'none' => 'Mai (titolo intero)',
+			),
+			'default'        => '1',
+			'tablet_default' => '1',
+			'mobile_default' => '1',
+			'description'    => 'I titoli più lunghi finiscono con "…".',
+			'selectors'      => array( '{{WRAPPER}}' => '--lu3g-title-lines: {{VALUE}};' ),
+		) );
+
+		$this->add_control( 'title_max_chars', array(
+			'label'       => 'Numero massimo di caratteri del titolo',
+			'type'        => Controls_Manager::NUMBER,
+			'min'         => 0,
+			'max'         => 300,
+			'default'     => '',
+			'description' => 'Vuoto = nessun limite. Taglia alla fine dell\'ultima parola intera e aggiunge "…"; il titolo completo resta visibile passando il mouse.',
+		) );
+
 		$this->add_responsive_control( 'title_size', array(
 			'label'      => 'Dimensione titolo',
 			'type'       => Controls_Manager::SLIDER,
@@ -1139,6 +1165,7 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			data-config="<?php echo esc_attr( $payload ); ?>"
 			data-sig="<?php echo esc_attr( $signature ); ?>"
 			data-min="<?php echo esc_attr( $min ); ?>"
+			data-title-max="<?php echo esc_attr( max( 0, (int) ( $s['title_max_chars'] ?? 0 ) ) ); ?>"
 			data-pos="<?php echo esc_attr( wp_json_encode( $positions ) ); ?>"
 			data-bp="<?php echo esc_attr( wp_json_encode( self::breakpoints() ) ); ?>"
 			data-overlay="<?php echo 'yes' === ( $s['overlay_show'] ?? 'yes' ) ? 'yes' : 'no'; ?>"

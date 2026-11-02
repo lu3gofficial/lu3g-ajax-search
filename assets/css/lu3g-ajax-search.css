@@ -646,8 +646,11 @@ html.lu3g-search-lock body {
 	letter-spacing: var(--lu3g-title-spacing, normal);
 	text-transform: var(--lu3g-title-transform, none);
 	line-height: 1.35;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: var(--lu3g-title-lines, 1);
+	line-clamp: var(--lu3g-title-lines, 1);
+	overflow-wrap: anywhere;
 	text-decoration: none;
 	text-underline-offset: 3px;
 	transition: color 0.15s ease;
