@@ -1,5 +1,8 @@
 # Registro delle modifiche
 
+## 1.7.0
+- Stile → Risultati, "Parte del titolo da mostrare": titolo intero, solo dopo il separatore o solo prima. "Abito Da Sposa Demetrios – Style 1285" può diventare "Style 1285". La ricerca continua a cercare nel titolo completo, che resta visibile passando il mouse. I titoli senza separatore restano interi.
+
 ## 1.6.0
 - Stile → Risultati, "Troncare il titolo dopo": 1, 2, 3 o 4 righe, oppure mai, per desktop, tablet e mobile. Il predefinito resta 1 riga con "…".
 - "Numero massimo di caratteri del titolo": taglia all'ultima parola intera e aggiunge "…"; il titolo completo resta visibile passando il mouse.

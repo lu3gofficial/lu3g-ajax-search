@@ -870,6 +870,26 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			'tab'   => Controls_Manager::TAB_STYLE,
 		) );
 
+		$this->add_control( 'title_part', array(
+			'label'       => 'Parte del titolo da mostrare',
+			'type'        => Controls_Manager::SELECT,
+			'options'     => array(
+				'full'   => 'Titolo intero',
+				'after'  => 'Solo dopo il separatore',
+				'before' => 'Solo prima del separatore',
+			),
+			'default'     => 'full',
+			'description' => 'Esempio: "Abito Da Sposa Demetrios – Style 1285" diventa "Style 1285". La ricerca continua a cercare nel titolo completo.',
+		) );
+
+		$this->add_control( 'title_separator', array(
+			'label'       => 'Separatore',
+			'type'        => Controls_Manager::TEXT,
+			'default'     => '–',
+			'condition'   => array( 'title_part!' => 'full' ),
+			'description' => 'Il testo che divide il titolo. Con un trattino valgono tutti i tipi (-, –, —), purché abbiano uno spazio prima e dopo. Si usa il primo che compare; i titoli senza separatore restano interi.',
+		) );
+
 		$this->add_responsive_control( 'title_lines', array(
 			'label'          => 'Troncare il titolo dopo',
 			'type'           => Controls_Manager::SELECT,
@@ -1166,6 +1186,8 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			data-sig="<?php echo esc_attr( $signature ); ?>"
 			data-min="<?php echo esc_attr( $min ); ?>"
 			data-title-max="<?php echo esc_attr( max( 0, (int) ( $s['title_max_chars'] ?? 0 ) ) ); ?>"
+			data-title-part="<?php echo esc_attr( in_array( $s['title_part'] ?? '', array( 'after', 'before' ), true ) ? $s['title_part'] : 'full' ); ?>"
+			data-title-sep="<?php echo esc_attr( (string) ( $s['title_separator'] ?? '' ) ); ?>"
 			data-pos="<?php echo esc_attr( wp_json_encode( $positions ) ); ?>"
 			data-bp="<?php echo esc_attr( wp_json_encode( self::breakpoints() ) ); ?>"
 			data-overlay="<?php echo 'yes' === ( $s['overlay_show'] ?? 'yes' ) ? 'yes' : 'no'; ?>"

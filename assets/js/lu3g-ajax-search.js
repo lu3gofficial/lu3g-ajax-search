@@ -112,6 +112,30 @@
     return frag;
   }
 
+  // Parte del titolo da mostrare: prima o dopo il primo separatore; senza separatore resta intero.
+  // Un trattino vale per tutti i tipi di trattino (WordPress trasforma " - " in " – "), con gli spazi attorno.
+  function parteTitolo(testo, parte, separatore) {
+    const sep = (separatore || '').trim();
+    if (parte === 'full' || !parte || !sep) return testo;
+
+    let inizio = -1;
+    let lunghezza = 0;
+    if (/^[-–—]$/.test(sep)) {
+      const m = /\s+[-–—]\s+/.exec(testo);
+      if (m) {
+        inizio = m.index;
+        lunghezza = m[0].length;
+      }
+    } else {
+      inizio = testo.toLowerCase().indexOf(sep.toLowerCase());
+      lunghezza = sep.length;
+    }
+    if (inizio === -1) return testo;
+
+    const risultato = (parte === 'before' ? testo.slice(0, inizio) : testo.slice(inizio + lunghezza)).trim();
+    return risultato || testo;
+  }
+
   // Limite di caratteri: taglia all'ultima parola intera, se non è troppo indietro
   function tronca(testo, massimo) {
     const lettere = Array.from(testo);
@@ -137,6 +161,8 @@
 
       this.min = parseInt(root.dataset.min, 10) || 2;
       this.titoloMax = parseInt(root.dataset.titleMax, 10) || 0;
+      this.titoloParte = root.dataset.titlePart || 'full';
+      this.titoloSep = root.dataset.titleSep || '';
       this.posizioni = {};
       this.bp = { mobile: 767, tablet: 1024 };
       try { this.posizioni = JSON.parse(root.dataset.pos || '{}'); } catch (e) { this.posizioni = {}; }
@@ -604,7 +630,7 @@
         const titolo = document.createElement('span');
         titolo.className = 'lu3g-search__title';
         const completo = r.title || '';
-        const breve = tronca(completo, self.titoloMax);
+        const breve = tronca(parteTitolo(completo, self.titoloParte, self.titoloSep), self.titoloMax);
         if (breve !== completo) a.title = completo;
         titolo.append(evidenzia(breve, q));
         testo.append(titolo);
