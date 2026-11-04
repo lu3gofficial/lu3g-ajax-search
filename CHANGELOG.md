@@ -1,5 +1,9 @@
 # Registro delle modifiche
 
+## 1.7.1
+- Nuova opzione "Cerca nello SKU dei prodotti", attiva di serie: con WooCommerce trova il prodotto anche con una parte del codice ("114/26050" trova "chiavisegrete-114/26050"), comprese le varianti.
+- Corretto: nel campo "Meta field in cui cercare" si poteva inserire un tag dinamico, che diventava un nome di campo inesistente e la ricerca non trovava nulla. Ora il campo accetta solo nomi scritti a mano; i valori con spazi vengono ignorati.
+
 ## 1.7.0
 - Stile → Risultati, "Parte del titolo da mostrare": titolo intero, solo dopo il separatore o solo prima. "Abito Da Sposa Demetrios – Style 1285" può diventare "Style 1285". La ricerca continua a cercare nel titolo completo, che resta visibile passando il mouse. I titoli senza separatore restano interi.
 

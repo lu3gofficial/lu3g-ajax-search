@@ -85,12 +85,21 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 			'description' => 'Uno o più post type (es. il CPT prodotti di JetEngine).',
 		) );
 
+		$this->add_control( 'search_sku', array(
+			'label'        => 'Cerca nello SKU dei prodotti',
+			'type'         => Controls_Manager::SWITCHER,
+			'return_value' => 'yes',
+			'default'      => 'yes',
+			'description'  => 'WooCommerce: trova il prodotto anche con una parte del codice, comprese le varianti.',
+		) );
+
 		$this->add_control( 'meta_keys', array(
 			'label'       => 'Meta field in cui cercare',
 			'type'        => Controls_Manager::TEXT,
 			'placeholder' => 'marca, codice_prodotto',
 			'label_block' => true,
-			'description' => 'Nomi dei campi JetEngine separati da virgola. Solo campi semplici (testo, select, numero): repeater e checkbox sono salvati serializzati e danno risultati poco precisi.',
+			'dynamic'     => array( 'active' => false ),
+			'description' => 'Nomi dei campi separati da virgola, scritti a mano e senza spazi. Solo campi semplici (testo, select, numero): repeater e checkbox sono salvati serializzati e danno risultati poco precisi.',
 		) );
 
 		$this->add_control( 'search_terms', array(
@@ -1118,12 +1127,17 @@ class Lu3g_Ajax_Search_Widget extends Widget_Base {
 		$s  = $this->get_settings_for_display();
 		$id = $this->get_id();
 
-		$meta_keys = array_filter( array_map( 'trim', explode( ',', (string) ( $s['meta_keys'] ?? '' ) ) ) );
+		// Valore salvato, non quello dei tag dinamici: qui serve il nome di un campo, non il valore di un prodotto.
+		// Un nome con spazi non è un campo valido: va ignorato, non trasformato in un altro nome.
+		$meta_keys = array_filter( array_map( 'trim', explode( ',', (string) $this->get_settings( 'meta_keys' ) ) ), static function ( $key ) {
+			return '' !== $key && ! preg_match( '/\s/', $key );
+		} );
 		$min       = max( 1, min( 5, (int) ( $s['min_chars'] ?? 2 ) ) );
 
 		list( $payload, $signature ) = Lu3g_Search_Config::sign( array(
 			'types'  => (array) ( $s['post_types'] ?? array() ),
 			'meta'   => $meta_keys,
+			'sku'    => 'yes' === ( $s['search_sku'] ?? 'yes' ),
 			'terms'  => 'yes' === ( $s['search_terms'] ?? '' ),
 			'subtax' => (string) ( $s['subtitle_tax'] ?? '' ),
 			'thumb'  => 'yes' === ( $s['show_thumb'] ?? '' ),

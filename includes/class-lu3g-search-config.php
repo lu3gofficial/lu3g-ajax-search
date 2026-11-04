@@ -48,6 +48,7 @@ class Lu3g_Search_Config {
 			'types'  => array_values( array_filter( array_map( 'sanitize_key', $types ) ) ),
 			'meta'   => array_values( array_filter( array_map( 'sanitize_key', $meta ) ) ),
 			'terms'  => ! empty( $config['terms'] ),
+			'sku'    => array_key_exists( 'sku', $config ) ? ! empty( $config['sku'] ) : true, // pagine in cache senza questa voce: attivo
 			'subtax' => isset( $config['subtax'] ) ? sanitize_key( $config['subtax'] ) : '',
 			'thumb'  => ! empty( $config['thumb'] ),
 			'limit'  => max( 1, min( 20, (int) ( $config['limit'] ?? 8 ) ) ),
