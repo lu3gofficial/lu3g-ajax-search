@@ -1,5 +1,9 @@
 # Registro delle modifiche
 
+## 1.7.2
+- `includes/class-updater.php` ora è generato dal modello comune di [lu3g-updater](https://github.com/lu3gofficial/lu3g-updater) (1.0.0), a partire dal nuovo file `.lu3g-updater`. Il codice dell'updater è lo stesso di prima: cambia solo il commento in cima.
+- Release avviabile anche da GitHub, senza computer: *Actions → Release → Run workflow* sul branch `main`. Il tag lo crea l'automazione dalla `Version` del plugin, e si ferma se quella versione è già pubblicata.
+
 ## 1.7.1
 - Nuova opzione "Cerca nello SKU dei prodotti", attiva di serie: con WooCommerce trova il prodotto anche con una parte del codice ("114/26050" trova "chiavisegrete-114/26050"), comprese le varianti.
 - Corretto: nel campo "Meta field in cui cercare" si poteva inserire un tag dinamico, che diventava un nome di campo inesistente e la ricerca non trovava nulla. Ora il campo accetta solo nomi scritti a mano; i valori con spazi vengono ignorati.
