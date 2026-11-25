@@ -440,14 +440,22 @@
         if (this.input.value) this.input.select();
 
         // Un tema che anima la visibilità dei campi lo tiene nascosto per un istante e il focus non entra:
-        // riprova al fotogramma successivo
+        // riprova a ogni fotogramma per circa mezzo secondo, finché nessun altro elemento ha preso il focus
         if (document.activeElement !== this.input) {
           const self = this;
-          requestAnimationFrame(function () {
-            if (!self.aperto || document.activeElement === self.input) return;
+          let tentativi = 0;
+          const riprova = function () {
+            const attivo = document.activeElement;
+            if (!self.aperto || attivo === self.input) return;
+            if (attivo && attivo !== document.body && attivo !== self.toggle) return;
             self.input.focus({ preventScroll: true });
-            if (self.input.value) self.input.select();
-          });
+            if (document.activeElement === self.input) {
+              if (self.input.value) self.input.select();
+            } else if (++tentativi < 30) {
+              requestAnimationFrame(riprova);
+            }
+          };
+          requestAnimationFrame(riprova);
         }
       }
     }

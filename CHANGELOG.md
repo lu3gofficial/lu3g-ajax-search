@@ -1,7 +1,7 @@
 # Registro delle modifiche
 
 ## 1.7.3
-- Corretto: con il tema Hello Elementor, aprendo la ricerca il cursore non entrava nel campo e bisognava cliccarci prima di scrivere; su iPhone non si apriva la tastiera. Il `reset.css` del tema anima tutte le proprietà dei campi di ricerca (`transition: all`), visibilità compresa, e all'apertura il campo risultava ancora nascosto. Ora il campo anima solo il colore e, se un altro tema lo tiene nascosto per un istante, il focus riprova al fotogramma successivo.
+- Corretto: con il tema Hello Elementor, aprendo la ricerca il cursore non entrava nel campo e bisognava cliccarci prima di scrivere; su iPhone non si apriva la tastiera. Il `reset.css` del tema anima tutte le proprietà dei campi di ricerca (`transition: all`), visibilità compresa, e all'apertura il campo risultava ancora nascosto. Ora il campo anima solo il colore e, se un altro tema lo tiene nascosto per un istante, il focus riprova per circa mezzo secondo.
 - Corretto: con un header trasparente sopra la foto (blocchi in `position: absolute`, contenitore dell'header alto 0) il box e il velo partivano dal bordo alto dello schermo, coprendo e sfocando l'header. Ora partono dal fondo dei blocchi visibili dell'header, come negli header normali.
 
 ## 1.7.2
