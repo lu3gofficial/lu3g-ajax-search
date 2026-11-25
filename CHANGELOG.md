@@ -1,5 +1,9 @@
 # Registro delle modifiche
 
+## 1.7.3
+- Corretto: con il tema Hello Elementor, aprendo la ricerca il cursore non entrava nel campo e bisognava cliccarci prima di scrivere; su iPhone non si apriva la tastiera. Il `reset.css` del tema anima tutte le proprietà dei campi di ricerca (`transition: all`), visibilità compresa, e all'apertura il campo risultava ancora nascosto. Ora il campo anima solo il colore e, se un altro tema lo tiene nascosto per un istante, il focus riprova al fotogramma successivo.
+- Corretto: con un header trasparente sopra la foto (blocchi in `position: absolute`, contenitore dell'header alto 0) il box e il velo partivano dal bordo alto dello schermo, coprendo e sfocando l'header. Ora partono dal fondo dei blocchi visibili dell'header, come negli header normali.
+
 ## 1.7.2
 - `includes/class-updater.php` ora è generato dal modello comune di [lu3g-updater](https://github.com/lu3gofficial/lu3g-updater) (1.0.0), a partire dal nuovo file `.lu3g-updater`. Il codice dell'updater è lo stesso di prima: cambia solo il commento in cima.
 - Release avviabile anche da GitHub, senza computer: *Actions → Release → Run workflow* sul branch `main`. Il tag lo crea l'automazione dalla `Version` del plugin, e si ferma se quella versione è già pubblicata.
