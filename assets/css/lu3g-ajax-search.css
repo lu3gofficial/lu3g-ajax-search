@@ -390,6 +390,9 @@ html.lu3g-search-lock body {
 	line-height: 1.4;
 	appearance: none;
 	-webkit-appearance: none;
+	/* Solo il colore: con "transition: all" del tema (es. reset.css di Hello Elementor) anche la visibilità
+	   del campo veniva animata, il campo risultava ancora nascosto all'apertura e il focus non entrava */
+	transition: color 0.2s ease;
 }
 
 .lu3g-search__panel .lu3g-search__input::placeholder {

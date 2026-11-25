@@ -438,6 +438,25 @@
       if (!this.apertoInEditor) {
         this.input.focus({ preventScroll: true });
         if (this.input.value) this.input.select();
+
+        // Un tema che anima la visibilità dei campi lo tiene nascosto per un istante e il focus non entra:
+        // riprova a ogni fotogramma per circa mezzo secondo, finché nessun altro elemento ha preso il focus
+        if (document.activeElement !== this.input) {
+          const self = this;
+          let tentativi = 0;
+          const riprova = function () {
+            const attivo = document.activeElement;
+            if (!self.aperto || attivo === self.input) return;
+            if (attivo && attivo !== document.body && attivo !== self.toggle) return;
+            self.input.focus({ preventScroll: true });
+            if (document.activeElement === self.input) {
+              if (self.input.value) self.input.select();
+            } else if (++tentativi < 30) {
+              requestAnimationFrame(riprova);
+            }
+          };
+          requestAnimationFrame(riprova);
+        }
       }
     }
 
@@ -493,9 +512,9 @@
       panel.classList.add('lu3g-pos-' + pos);
 
       const header = this.root.closest('.elementor-location-header') || this.root.closest('header');
-      const rif = (header || this.root).getBoundingClientRect();
+      const fondo = header ? this.fondoHeader(header) : this.root.getBoundingClientRect().bottom;
       // Widget in fondo alla pagina: il box non deve finire sotto il bordo dello schermo
-      const top = Math.min(Math.max(0, Math.round(rif.bottom)), Math.round(window.innerHeight * 0.5));
+      const top = Math.min(Math.max(0, Math.round(fondo)), Math.round(window.innerHeight * 0.5));
       const barra = document.getElementById('wpadminbar');
       const schermo = barra ? Math.max(0, Math.round(barra.getBoundingClientRect().bottom)) : 0;
 
@@ -505,6 +524,27 @@
 
       if (pos === 'icon') panel.style.setProperty('--lu3g-left', this.sinistraIcona() + 'px');
       else panel.style.removeProperty('--lu3g-left');
+    }
+
+    // Fondo dell'header. Un header trasparente sopra la foto ha i blocchi in position: absolute e il suo
+    // contenitore è alto 0: conta allora il fondo più basso dei suoi blocchi principali visibili.
+    // Solo i figli diretti del documento dell'header: i template annidati (mega menu, off-canvas) non contano.
+    fondoHeader(header) {
+      const rif = header.getBoundingClientRect();
+      if (rif.height >= 1) return rif.bottom;
+
+      const documento = header.matches('.elementor') ? header : (header.querySelector(':scope > .elementor') || header);
+      const vw = document.documentElement.clientWidth;
+      let fondo = rif.bottom;
+
+      documento.querySelectorAll(':scope > *, :scope > .elementor-section-wrap > *').forEach(function (blocco) {
+        const r = blocco.getBoundingClientRect();
+        if (r.height < 1 || r.right <= 0 || r.left >= vw) return;
+        if (getComputedStyle(blocco).visibility === 'hidden') return;
+        fondo = Math.max(fondo, r.bottom);
+      });
+
+      return fondo;
     }
 
     // Allineato all'icona: bordo destro sull'icona; se non c'è spazio, bordo sinistro sull'icona.
